@@ -1,0 +1,213 @@
+#include <stdio.h>
+#include <math.h>
+
+// Program 1: Absolute, Relative, and Percentage Error
+void error_calculation() {
+    double actual, approx;
+    printf("Enter actual value: ");
+    scanf("%lf", &actual);
+    printf("Enter approximate value: ");
+    scanf("%lf", &approx);
+
+    double abs_error = fabs(actual - approx);
+    double rel_error = abs_error / fabs(actual);
+    double perc_error = rel_error * 100;
+
+    printf("Absolute Error: %lf\n", abs_error);
+    printf("Relative Error: %lf\n", rel_error);
+    printf("Percentage Error: %lf%%\n", perc_error);
+}
+
+// Program 2: Secant Method for Root Finding
+double func(double x) {
+    return x * x * x - x - 1;  // Example function; change as needed
+}
+
+void secant_method() {
+    double x0, x1, tol;
+    printf("Enter initial guesses x0 and x1: ");
+    scanf("%lf %lf", &x0, &x1);
+    printf("Enter tolerance: ");
+    scanf("%lf", &tol);
+
+    double x2;
+    do {
+        x2 = x1 - (func(x1) * (x1 - x0)) / (func(x1) - func(x0));
+        x0 = x1;
+        x1 = x2;
+    } while (fabs(func(x2)) > tol);
+    printf("Root: %lf\n", x2);
+}
+
+// Program 3: Gauss Elimination for System of Equations
+void gauss_elimination() {
+    int n;
+    printf("Enter the number of variables: ");
+    scanf("%d", &n);
+
+    double a[10][11];
+    printf("Enter the augmented matrix (including the right-hand side values):\n");
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j <= n; j++)
+            scanf("%lf", &a[i][j]);
+
+    for (int i = 0; i < n; i++) {
+        for (int k = i + 1; k < n; k++) {
+            double t = a[k][i] / a[i][i];
+            for (int j = 0; j <= n; j++)
+                a[k][j] -= t * a[i][j];
+        }
+    }
+
+    double x[10];
+    for (int i = n - 1; i >= 0; i--) {
+        x[i] = a[i][n] / a[i][i];
+        for (int j = i - 1; j >= 0; j--)
+            a[j][n] -= a[j][i] * x[i];
+    }
+
+    printf("Solution:\n");
+    for (int i = 0; i < n; i++)
+        printf("x[%d] = %lf\n", i, x[i]);
+}
+
+// Program 4: Gauss-Jordan Method
+void gauss_jordan() {
+    int n;
+    printf("Enter the number of variables: ");
+    scanf("%d", &n);
+
+    double a[10][11];
+    printf("Enter the augmented matrix (including the right-hand side values):\n");
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j <= n; j++)
+            scanf("%lf", &a[i][j]);
+
+    for (int i = 0; i < n; i++) {
+        double t = a[i][i];
+        for (int j = 0; j <= n; j++)
+            a[i][j] /= t;
+        for (int k = 0; k < n; k++) {
+            if (i != k) {
+                t = a[k][i];
+                for (int j = 0; j <= n; j++)
+                    a[k][j] -= t * a[i][j];
+            }
+        }
+    }
+
+    printf("Solution:\n");
+    for (int i = 0; i < n; i++)
+        printf("x[%d] = %lf\n", i, a[i][n]);
+}
+
+// Program 5: Gauss-Seidel Iterative Method
+void gauss_seidel() {
+    int n, max_iter;
+    printf("Enter the number of variables: ");
+    scanf("%d", &n);
+
+    double a[10][11], x[10] = {0};
+    printf("Enter the augmented matrix (including the right-hand side values):\n");
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j <= n; j++)
+            scanf("%lf", &a[i][j]);
+
+    printf("Enter maximum iterations: ");
+    scanf("%d", &max_iter);
+
+    for (int it = 0; it < max_iter; it++) {
+        for (int i = 0; i < n; i++) {
+            double sum = a[i][n];
+            for (int j = 0; j < n; j++)
+                if (i != j) sum -= a[i][j] * x[j];
+            x[i] = sum / a[i][i];
+        }
+    }
+
+    printf("Solution:\n");
+    for (int i = 0; i < n; i++)
+        printf("x[%d] = %lf\n", i, x[i]);
+}
+
+// Program 6: Gauss Forward Interpolation
+void gauss_forward_interpolation() {
+    int n;
+    printf("Enter number of data points: ");
+    scanf("%d", &n);
+
+    double x[10], y[10];
+    printf("Enter x and y values:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%lf %lf", &x[i], &y[i]);
+
+    double diff[10][10];
+    for (int i = 0; i < n; i++) diff[i][0] = y[i];
+    for (int j = 1; j < n; j++)
+        for (int i = 0; i < n - j; i++)
+            diff[i][j] = diff[i + 1][j - 1] - diff[i][j - 1];
+
+    double val;
+    printf("Enter value to interpolate: ");
+    scanf("%lf", &val);
+
+    double u = (val - x[0]) / (x[1] - x[0]);
+    double result = y[0];
+    double term = 1;
+    for (int i = 1; i < n; i++) {
+        term *= (u - i + 1) / i;
+        result += term * diff[0][i];
+    }
+    printf("Interpolated value at %lf is %lf\n", val, result);
+}
+
+// Program 7: Straight Line Curve Fitting
+void straight_line_fit() {
+    int n;
+    printf("Enter number of data points: ");
+    scanf("%d", &n);
+
+    double x[10], y[10];
+    printf("Enter x and y values:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%lf %lf", &x[i], &y[i]);
+
+    double sum_x = 0, sum_y = 0, sum_xy = 0, sum_xx = 0;
+    for (int i = 0; i < n; i++) {
+        sum_x += x[i];
+        sum_y += y[i];
+        sum_xy += x[i] * y[i];
+        sum_xx += x[i] * x[i];
+    }
+    double a = (sum_y * sum_xx - sum_x * sum_xy) / (n * sum_xx - sum_x * sum_x);
+    double b = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+    printf("Fitted line: y = %lf + %lf*x\n", a, b);
+}
+
+// Program 8: Parabolic Curve Fitting
+void parabolic_curve_fit() {
+    int n;
+    printf("Enter number of data points: ");
+    scanf("%d", &n);
+
+    double x[10], y[10];
+    printf("Enter x and y values:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%lf %lf", &x[i], &y[i]);
+
+    double sum_x = 0, sum_y = 0, sum_x2 = 0, sum_x3 = 0, sum_x4 = 0;
+    double sum_xy = 0, sum_x2y = 0;
+    for (int i = 0; i < n; i++) {
+        sum_x += x[i];
+        sum_y += y[i];
+        sum_x2 += x[i] * x[i];
+        sum_x3 += x[i] * x[i] * x[i];
+        sum_x4 += x[i] * x[i] * x[i] * x[i];
+        sum_xy += x[i] * y[i];
+        sum_x2y += x[i] * x[i] * y[i];
+    }
+
+    double a[3][4] = {
+        {n, sum_x, sum_x2, sum_y},
+        {sum_x, sum_x2, sum_x3, sum_xy},
+        {sum_x2, sum
